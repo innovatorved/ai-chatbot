@@ -25,15 +25,10 @@ import { generateTitleFromUserMessage } from '../../actions';
 import { createDocument } from '@/lib/ai/tools/create-document';
 import { updateDocument } from '@/lib/ai/tools/update-document';
 import { requestSuggestions } from '@/lib/ai/tools/request-suggestions';
-import { getWeather } from '@/lib/ai/tools/get-weather';
 
 export const maxDuration = 60;
 
-type AllowedTools =
-  | 'createDocument'
-  | 'updateDocument'
-  | 'requestSuggestions'
-  | 'getWeather';
+type AllowedTools = 'createDocument' | 'updateDocument' | 'requestSuggestions';
 
 const blocksTools: AllowedTools[] = [
   'createDocument',
@@ -41,8 +36,7 @@ const blocksTools: AllowedTools[] = [
   'requestSuggestions',
 ];
 
-const weatherTools: AllowedTools[] = ['getWeather'];
-const allTools: AllowedTools[] = [...blocksTools, ...weatherTools];
+const allTools: AllowedTools[] = [...blocksTools];
 
 export async function POST(request: Request) {
   const {
@@ -92,7 +86,6 @@ export async function POST(request: Request) {
         experimental_transform: smoothStream({ chunking: 'word' }),
         experimental_generateMessageId: generateUUID,
         tools: {
-          getWeather,
           createDocument: createDocument({ session, dataStream, model }),
           updateDocument: updateDocument({ session, dataStream, model }),
           requestSuggestions: requestSuggestions({
