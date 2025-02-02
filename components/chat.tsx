@@ -7,7 +7,7 @@ import useSWR, { useSWRConfig } from 'swr';
 
 import { ChatHeader } from '@/components/chat-header';
 import type { Vote } from '@/lib/db/schema';
-import { fetcher, generateUUID } from '@/lib/utils';
+import { convertToUIMessages, fetcher, generateUUID } from '@/lib/utils';
 
 import { Block } from './block';
 import { MultimodalInput } from './multimodal-input';
@@ -116,6 +116,87 @@ export function Chat({
         votes={votes}
         isReadonly={isReadonly}
       />
+    </>
+  );
+}
+
+export function PrivateCodeChat({
+  id,
+  selectedModelId,
+  systemPrompt,
+}: {
+  id: string;
+  selectedModelId: string;
+  systemPrompt: string;
+}) {
+  const {
+    messages,
+    setMessages,
+    handleSubmit,
+    input,
+    setInput,
+    append,
+    isLoading,
+    stop,
+    reload,
+  } = useChat({
+    id,
+    body: { id, modelId: selectedModelId },
+    initialMessages: convertToUIMessages([
+      {
+        id,
+        chatId: generateUUID(),
+        role: 'system',
+        content: systemPrompt,
+        createdAt: new Date(),
+      },
+    ]),
+    experimental_throttle: 100,
+    sendExtraMessageFields: true,
+    generateId: generateUUID,
+    api: '/api/chat/custom',
+  });
+
+  const [attachments, setAttachments] = useState<Array<any>>([]);
+  const isBlockVisible = useBlockSelector((state) => state.isVisible);
+
+  return (
+    <>
+      <div className="flex flex-col min-w-0 h-dvh bg-background">
+        <ChatHeader
+          chatId={id}
+          selectedModelId={selectedModelId}
+          selectedVisibilityType="private"
+          isReadonly={false}
+          isSharingOptionEnabled={false}
+        />
+        <Messages
+          chatId={id}
+          isLoading={isLoading}
+          votes={[]}
+          messages={messages}
+          setMessages={setMessages}
+          reload={reload}
+          isReadonly={false}
+          isBlockVisible={isBlockVisible}
+        />
+
+        <form className="flex mx-auto px-4 bg-background pb-4 md:pb-6 gap-2 w-full md:max-w-3xl">
+          <MultimodalInput
+            chatId={id}
+            input={input}
+            setInput={setInput}
+            handleSubmit={handleSubmit}
+            isLoading={isLoading}
+            stop={stop}
+            attachments={attachments}
+            setAttachments={setAttachments}
+            messages={messages}
+            setMessages={setMessages}
+            append={append}
+          />
+        </form>
+      </div>
     </>
   );
 }

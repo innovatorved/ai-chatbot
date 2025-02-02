@@ -18,15 +18,16 @@ function PureChatHeader({
   selectedModelId,
   selectedVisibilityType,
   isReadonly,
+  isSharingOptionEnabled = true,
 }: {
   chatId: string;
   selectedModelId: string;
   selectedVisibilityType: VisibilityType;
   isReadonly: boolean;
+  isSharingOptionEnabled?: boolean;
 }) {
   const router = useRouter();
   const { open } = useSidebar();
-
   const { width: windowWidth } = useWindowSize();
 
   return (
@@ -53,18 +54,19 @@ function PureChatHeader({
       )}
 
       {!isReadonly && (
-        <ModelSelector
-          selectedModelId={selectedModelId}
-          className="order-1 md:order-2"
-        />
-      )}
-
-      {!isReadonly && (
-        <VisibilitySelector
-          chatId={chatId}
-          selectedVisibilityType={selectedVisibilityType}
-          className="order-1 md:order-3"
-        />
+        <>
+          <ModelSelector
+            selectedModelId={selectedModelId}
+            className="order-1 md:order-2"
+          />
+          {isSharingOptionEnabled && (
+            <VisibilitySelector
+              chatId={chatId}
+              selectedVisibilityType={selectedVisibilityType}
+              className="order-1 md:order-3"
+            />
+          )}
+        </>
       )}
     </header>
   );

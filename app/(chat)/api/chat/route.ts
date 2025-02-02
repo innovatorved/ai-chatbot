@@ -75,8 +75,6 @@ export async function POST(request: Request) {
     messages: [{ ...userMessage, createdAt: new Date(), chatId: id }],
   });
 
-  console.log('Chat saved', JSON.stringify(messages, null, 2));
-
   return createDataStreamResponse({
     execute: (dataStream) => {
       const hasAttachment = messages.some(

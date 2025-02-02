@@ -27,10 +27,10 @@ export const models: Array<Model> = [
     description: 'For complex, multi-step tasks',
   },
   {
-    id : 'llama-3.3-70b-specdec	',
-    label : 'Llama 3.3 70b SpecDec',
-    apiIdentifier : 'llama-3.3-70b-specdec',
-    description : 'For complex, multi-step tasks',
+    id: 'llama-3.3-70b-specdec',
+    label: 'Llama 3.3 70b SpecDec',
+    apiIdentifier: 'llama-3.3-70b-specdec',
+    description: 'For complex, multi-step tasks',
   },
   {
     id: 'llama-3.2-11b-vision-preview',
