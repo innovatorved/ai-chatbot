@@ -49,6 +49,7 @@ import {
 import type { Chat } from '@/lib/db/schema';
 import { fetcher } from '@/lib/utils';
 import { useChatVisibility } from '@/hooks/use-chat-visibility';
+import { draftFollowUpEmail, makeContentProfessional } from '@/app/(chat)/actions';
 
 type GroupedChats = {
   today: Chat[];
@@ -137,6 +138,31 @@ const PureChatItem = ({
           >
             <TrashIcon />
             <span>Delete</span>
+          </DropdownMenuItem>
+          <DropdownMenuSeparator />
+          <DropdownMenuItem
+            className="cursor-pointer"
+            onClick={async () => {
+              const followUpEmail = await draftFollowUpEmail({
+                userMessage: { role: 'user', content: chat.title },
+              });
+              toast.success('Follow-up email drafted successfully!');
+              console.log(followUpEmail);
+            }}
+          >
+            Draft Follow-Up Email
+          </DropdownMenuItem>
+          <DropdownMenuItem
+            className="cursor-pointer"
+            onClick={async () => {
+              const professionalContent = await makeContentProfessional({
+                userMessage: { role: 'user', content: chat.title },
+              });
+              toast.success('Content made professional successfully!');
+              console.log(professionalContent);
+            }}
+          >
+            Make Content Professional
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>

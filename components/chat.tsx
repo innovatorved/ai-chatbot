@@ -14,6 +14,7 @@ import { MultimodalInput } from './multimodal-input';
 import { Messages } from './messages';
 import { VisibilityType } from './visibility-selector';
 import { useBlockSelector } from '@/hooks/use-block';
+import { draftFollowUpEmail, makeContentProfessional } from '@/app/(chat)/actions';
 
 export function Chat({
   id,
@@ -60,6 +61,24 @@ export function Chat({
   const [attachments, setAttachments] = useState<Array<Attachment>>([]);
   const isBlockVisible = useBlockSelector((state) => state.isVisible);
 
+  const handleDraftFollowUpEmail = async () => {
+    const userMessage = { role: 'user', content: input };
+    const followUpEmail = await draftFollowUpEmail({ userMessage });
+    setMessages((prevMessages) => [
+      ...prevMessages,
+      { id: generateUUID(), role: 'assistant', content: followUpEmail },
+    ]);
+  };
+
+  const handleMakeContentProfessional = async () => {
+    const userMessage = { role: 'user', content: input };
+    const professionalContent = await makeContentProfessional({ userMessage });
+    setMessages((prevMessages) => [
+      ...prevMessages,
+      { id: generateUUID(), role: 'assistant', content: professionalContent },
+    ]);
+  };
+
   return (
     <>
       <div className="flex flex-col min-w-0 h-dvh bg-background">
@@ -97,6 +116,12 @@ export function Chat({
               append={append}
             />
           )}
+          <button type="button" onClick={handleDraftFollowUpEmail}>
+            Draft Follow-Up Email
+          </button>
+          <button type="button" onClick={handleMakeContentProfessional}>
+            Make Content Professional
+          </button>
         </form>
       </div>
 

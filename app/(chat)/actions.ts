@@ -52,3 +52,36 @@ export async function updateChatVisibility({
 }) {
   await updateChatVisiblityById({ chatId, visibility });
 }
+
+export async function draftFollowUpEmail({
+  userMessage,
+}: {
+  userMessage: CoreUserMessage;
+}) {
+  const { text: followUpEmail } = await generateText({
+    model: customModel('llama-3.1-8b-instant'),
+    system: `\n
+    - you will generate a follow-up email based on the user's message
+    - ensure it is professional and concise
+    - include a subject line and a body`,
+    prompt: JSON.stringify(userMessage),
+  });
+
+  return followUpEmail;
+}
+
+export async function makeContentProfessional({
+  userMessage,
+}: {
+  userMessage: CoreUserMessage;
+}) {
+  const { text: professionalContent } = await generateText({
+    model: customModel('llama-3.1-8b-instant'),
+    system: `\n
+    - you will rewrite the user's message to make it professional
+    - ensure it is clear and concise`,
+    prompt: JSON.stringify(userMessage),
+  });
+
+  return professionalContent;
+}
