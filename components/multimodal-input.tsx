@@ -152,12 +152,13 @@ function PureMultimodalInput({
 
       if (response.ok) {
         const data = await response.json();
-        const { url, pathname, contentType } = data;
+        console.log(JSON.stringify(data, null, 2));
+        const { url, name, type } = data;
 
         return {
           url,
-          name: pathname,
-          contentType: contentType,
+          name,
+          contentType: type,
         };
       }
       const { error } = await response.json();

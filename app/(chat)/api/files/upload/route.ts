@@ -58,7 +58,9 @@ export async function POST(request: Request) {
 
     try {
       const uploadResult = await utapi.uploadFiles(fileWithName);
-      return NextResponse.json(uploadResult);
+      return NextResponse.json({
+        ...uploadResult.data,
+      });
     } catch (error) {
       console.error('Upload error:', error);
       return NextResponse.json({ error: 'Upload failed' }, { status: 500 });

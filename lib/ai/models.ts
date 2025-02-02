@@ -30,7 +30,15 @@ export const models: Array<Model> = [
     id: 'llama-3.2-11b-vision-preview',
     label: 'Llama 3.2 11b Vision Preview',
     apiIdentifier: 'llama-3.2-11b-vision-preview',
-    description: 'For complex, multi-step tasks, including vision',
+    description:
+      'For complex, multi-step tasks, including vision. Tools are not availble with attachments',
+  },
+  {
+    id: 'llama-3.2-90b-vision-preview',
+    label: 'Llama 3.2 90b Vision Preview',
+    apiIdentifier: 'llama-3.2-90b-vision-preview',
+    description:
+      'For complex, multi-step tasks, including vision. Tools are not availble with attachments',
   },
   {
     id: 'deepseek-r1-distill-llama-70b',

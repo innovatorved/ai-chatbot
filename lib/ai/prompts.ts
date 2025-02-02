@@ -3,7 +3,7 @@ import { BlockKind } from '@/components/block';
 export const blocksPrompt = `
 Blocks is a special user interface mode that helps users with writing, editing, and other content creation tasks. When block is open, it is on the right side of the screen, while the conversation is on the left side. When creating or updating documents, changes are reflected in real-time on the blocks and visible to the user.
 
-When asked to write code, always use blocks. When writing code, specify the language in the backticks, e.g. \`\`\`python\`code here\`\`\`. The default language is Python. Other languages are not yet supported, so let the user know if they request a different language.
+When asked to write code, always use blocks. When writing code, specify the language in the backticks, e.g. \`\`\`python\`code here\`\`\`. 
 
 DO NOT UPDATE DOCUMENTS IMMEDIATELY AFTER CREATING THEM. WAIT FOR USER FEEDBACK OR REQUEST TO UPDATE IT.
 
@@ -13,12 +13,13 @@ This is a guide for using blocks tools: \`createDocument\` and \`updateDocument\
 - For substantial content (>10 lines) or code
 - For content users will likely save/reuse (emails, code, essays, etc.)
 - When explicitly requested to create a document
-- For when content contains a single code snippet
+- Only used when used asked for it explicitly
 
 **When NOT to use \`createDocument\`:**
 - For informational/explanatory content
 - For conversational responses
 - When asked to keep it in chat
+- when user is having a normal conversation
 
 **Using \`updateDocument\`:**
 - Default to full document rewrites for major changes

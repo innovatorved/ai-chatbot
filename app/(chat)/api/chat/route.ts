@@ -75,25 +75,35 @@ export async function POST(request: Request) {
     messages: [{ ...userMessage, createdAt: new Date(), chatId: id }],
   });
 
+  console.log('Chat saved', JSON.stringify(messages, null, 2));
+
   return createDataStreamResponse({
     execute: (dataStream) => {
+      const hasAttachment = messages.some(
+        (msg) =>
+          msg.experimental_attachments &&
+          msg.experimental_attachments.length > 0,
+      );
+
       const result = streamText({
         model: customModel(model.apiIdentifier),
-        system: systemPrompt,
+        system: hasAttachment ? undefined : systemPrompt,
         messages,
         maxSteps: 5,
-        experimental_activeTools: allTools,
+        experimental_activeTools: hasAttachment ? undefined : allTools,
         experimental_transform: smoothStream({ chunking: 'word' }),
         experimental_generateMessageId: generateUUID,
-        tools: {
-          createDocument: createDocument({ session, dataStream, model }),
-          updateDocument: updateDocument({ session, dataStream, model }),
-          requestSuggestions: requestSuggestions({
-            session,
-            dataStream,
-            model,
-          }),
-        },
+        tools: hasAttachment
+          ? undefined
+          : {
+              createDocument: createDocument({ session, dataStream, model }),
+              updateDocument: updateDocument({ session, dataStream, model }),
+              requestSuggestions: requestSuggestions({
+                session,
+                dataStream,
+                model,
+              }),
+            },
         onFinish: async ({ response }) => {
           if (session.user?.id) {
             try {
