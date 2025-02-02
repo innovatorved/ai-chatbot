@@ -2,7 +2,12 @@ import { cookies } from 'next/headers';
 
 import { DEFAULT_MODEL_NAME, models } from '@/lib/ai/models';
 import { PrivateCodeChat } from '@/components/chat';
+import { Metadata } from 'next';
 
+export const metadata: Metadata = {
+  metadataBase: new URL('https://chatbot-in.vercel.app/draft-emails'),
+  title: 'Draft Professional Emails',
+};
 const chatId = 'draft-emails';
 const title = 'Draft Professional Emails';
 const SYSTEM_PROMPT = `
