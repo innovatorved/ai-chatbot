@@ -33,13 +33,6 @@ export const models: Array<Model> = [
     description: 'For complex, multi-step tasks',
   },
   {
-    id: 'llama-3.2-11b-vision-preview',
-    label: 'Llama 3.2 11b Vision Preview',
-    apiIdentifier: 'llama-3.2-11b-vision-preview',
-    description:
-      'For complex, multi-step tasks, including vision. Tools are not availble with attachments',
-  },
-  {
     id: 'llama-3.2-90b-vision-preview',
     label: 'Llama 3.2 90b Vision Preview',
     apiIdentifier: 'llama-3.2-90b-vision-preview',
@@ -51,6 +44,18 @@ export const models: Array<Model> = [
     label: 'DeepSeek R1 Distill Llama 70b',
     apiIdentifier: 'deepseek-r1-distill-llama-70b',
     description: 'For complex, multi-step tasks, thinking and reasoning',
+  },
+  {
+    id: 'deepseek-r1-distill-qwen-32b',
+    label: 'DeepSeek R1 Distill Qwen 32b',
+    apiIdentifier: 'deepseek-r1-distill-qwen-32b',
+    description: 'For complex, multi-step tasks, thinking and reasoning',
+  },
+  {
+    id: 'qwen-2.5-32b',
+    label: 'Qwen 2.5 32b',
+    apiIdentifier: 'qwen-2.5-32b',
+    description: 'For simple, single-step tasks',
   },
 ] as const;
 
