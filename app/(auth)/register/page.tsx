@@ -2,7 +2,13 @@
 
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { useActionState, useEffect, useState } from 'react';
+import {
+  useActionState,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from 'react';
 import { toast } from 'sonner';
 
 import { AuthForm } from '@/components/auth-form';
@@ -15,6 +21,17 @@ export default function Page() {
 
   const [email, setEmail] = useState('');
   const [isSuccessful, setIsSuccessful] = useState(false);
+  const [turnstileStatus, setTurnstileStatus] = useState<
+    'success' | 'error' | 'expired' | 'required'
+  >('required');
+  const turnstileRef = useRef<string>();
+
+  const handleTurnstileStatus = useCallback(
+    (status: 'success' | 'error' | 'expired' | 'required') => {
+      setTurnstileStatus(status);
+    },
+    [],
+  );
 
   const [state, formAction] = useActionState<RegisterActionState, FormData>(
     register,
@@ -39,7 +56,24 @@ export default function Page() {
 
   const handleSubmit = (formData: FormData) => {
     setEmail(formData.get('email') as string);
-    formAction(formData);
+    switch (turnstileStatus) {
+      case 'required':
+        turnstileRef.current = 'required';
+        toast.error('Please complete the reCAPTCHA challenge');
+        break;
+      case 'expired':
+        turnstileRef.current = 'expired';
+        toast.error('reCAPTCHA challenge expired');
+        break;
+      case 'error':
+        turnstileRef.current = 'error';
+        toast.error('Failed to complete the reCAPTCHA challenge');
+        break;
+      case 'success':
+        turnstileRef.current = 'success';
+        formAction(formData);
+        break;
+    }
   };
 
   return (
@@ -51,7 +85,12 @@ export default function Page() {
             Create an account with your email and password
           </p>
         </div>
-        <AuthForm action={handleSubmit} defaultEmail={email}>
+        <AuthForm
+          action={handleSubmit}
+          defaultEmail={email}
+          handleTurnstileStatus={handleTurnstileStatus}
+          turnstileRef={turnstileRef}
+        >
           <SubmitButton isSuccessful={isSuccessful}>Sign Up</SubmitButton>
           <p className="text-center text-sm text-gray-600 mt-4 dark:text-zinc-400">
             {'Already have an account? '}

@@ -1,10 +1,12 @@
 'use server';
 
 import { z } from 'zod';
+import { v4 as generateRandomUUID } from 'uuid';
 
 import { createUser, getUser } from '@/lib/db/queries';
 
 import { signIn } from './auth';
+import { validateTurnstileToken } from 'next-turnstile';
 
 const authFormSchema = z.object({
   email: z.string().email(),
@@ -12,7 +14,13 @@ const authFormSchema = z.object({
 });
 
 export interface LoginActionState {
-  status: 'idle' | 'in_progress' | 'success' | 'failed' | 'invalid_data';
+  status:
+    | 'idle'
+    | 'in_progress'
+    | 'success'
+    | 'failed'
+    | 'invalid_data'
+    | 'invalid_captcha';
 }
 
 export const login = async (
@@ -20,10 +28,23 @@ export const login = async (
   formData: FormData,
 ): Promise<LoginActionState> => {
   try {
+    const validationResponse = await validateTurnstileToken({
+      token: formData.get('cf-turnstile-response')?.toString() ?? '',
+      secretKey: process.env.TURNSTILE_SECRET_KEY!,
+      idempotencyKey: generateRandomUUID(),
+      sandbox: process.env.NODE_ENV === 'development',
+    });
+
+    if (!validationResponse.success) {
+      return { status: 'invalid_captcha' };
+    }
+
     const validatedData = authFormSchema.parse({
       email: formData.get('email'),
       password: formData.get('password'),
     });
+
+    console.log();
 
     await signIn('credentials', {
       email: validatedData.email,
@@ -48,7 +69,8 @@ export interface RegisterActionState {
     | 'success'
     | 'failed'
     | 'user_exists'
-    | 'invalid_data';
+    | 'invalid_data'
+    | 'invalid_captcha';
 }
 
 export const register = async (
@@ -56,6 +78,17 @@ export const register = async (
   formData: FormData,
 ): Promise<RegisterActionState> => {
   try {
+    const validationResponse = await validateTurnstileToken({
+      token: formData.get('cf-turnstile-response')?.toString() ?? '',
+      secretKey: process.env.TURNSTILE_SECRET_KEY!,
+      idempotencyKey: generateRandomUUID(),
+      sandbox: process.env.NODE_ENV === 'development',
+    });
+
+    if (!validationResponse.success) {
+      return { status: 'invalid_captcha' };
+    }
+
     const validatedData = authFormSchema.parse({
       email: formData.get('email'),
       password: formData.get('password'),
